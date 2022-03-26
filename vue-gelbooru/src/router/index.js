@@ -12,7 +12,18 @@ const routes = [{
 
 const router = createRouter({
   routes,
-  history: createWebHistory()
+  history: createWebHistory(),
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+
+    if (parseInt(to.query.pid) === 0) {
+      return {
+        top: 0
+      };
+    }
+  }
 })
 
 export default router
