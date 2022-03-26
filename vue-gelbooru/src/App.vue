@@ -1,26 +1,30 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 import NavHeader from "./components/NavHeader.vue";
-
 import ImageList from "./components/ImageList.vue";
 import ImageListItem from "./components/ImageListItem.vue";
-
 import ImageViewer from "./components/ImageViewer.vue";
 
-import { get_posts } from "./api";
+import useLoadNewPageWatcher from "./hooks/useLoadNewPageWatcher";
+import useInfiniteScroll from "./hooks/useInfiniteScroll";
 
 const pid = ref(0);
 const search = ref("");
+const posts = ref([]);
 
-const posts = ref({});
+useLoadNewPageWatcher(pid, search, posts);
+
+useInfiniteScroll(
+  () => {
+    pid.value++;
+  },
+  300,
+  25
+);
+
 const currentPost = ref({});
-
 const showImageViewer = ref(false);
-
-get_posts(pid.value, search.value).then((data) => {
-  posts.value = data;
-});
 </script>
 
 <template>
@@ -37,7 +41,7 @@ get_posts(pid.value, search.value).then((data) => {
   <nav-header v-model:search="search"></nav-header>
   <image-list>
     <image-list-item
-      v-for="post in posts.post"
+      v-for="post in posts"
       :key="post.id"
       :post="post"
       @click="

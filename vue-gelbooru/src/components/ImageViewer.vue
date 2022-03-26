@@ -85,7 +85,7 @@ export default {
 }
 
 img.original-size {
-  max-width: unset !important;
+  /* max-width: unset !important; */
   max-height: unset !important;
   object-fit: unset !important;
   cursor: zoom-out !important;
