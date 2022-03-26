@@ -1,30 +1,17 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
+import emitter from "./hooks/useMitt";
+import { SHOW_IMAGE_VIEWER } from "./constants";
 
-import NavHeader from "./components/NavHeader.vue";
-import ImageList from "./components/ImageList.vue";
-import ImageListItem from "./components/ImageListItem.vue";
 import ImageViewer from "./components/ImageViewer.vue";
-
-import useLoadNewPageWatcher from "./hooks/useLoadNewPageWatcher";
-import useInfiniteScroll from "./hooks/useInfiniteScroll";
-
-const pid = ref(0);
-const search = ref("");
-const posts = ref([]);
-
-useLoadNewPageWatcher(pid, search, posts);
-
-useInfiniteScroll(
-  () => {
-    pid.value++;
-  },
-  300,
-  25
-);
 
 const currentPost = ref({});
 const showImageViewer = ref(false);
+
+emitter.on(SHOW_IMAGE_VIEWER, (post) => {
+  currentPost.value = post;
+  showImageViewer.value = true;
+});
 </script>
 
 <template>
@@ -38,18 +25,7 @@ const showImageViewer = ref(false);
     </transition>
   </teleport>
 
-  <nav-header v-model:search="search"></nav-header>
-  <image-list>
-    <image-list-item
-      v-for="post in posts"
-      :key="post.id"
-      :post="post"
-      @click="
-        showImageViewer = true;
-        currentPost = post;
-      "
-    ></image-list-item>
-  </image-list>
+  <router-view></router-view>
 </template>
 
 <style>

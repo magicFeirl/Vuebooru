@@ -2,8 +2,9 @@
   <div class="thumb">
     <img
       :class="{ video: isVideo(post.file_url) }"
-      :src="post.preview_url"
+      :data-src="post.preview_url"
       :alt="post.tags"
+      v-lazy
     />
   </div>
 </template>
@@ -28,6 +29,7 @@ export default {
   height: 200px;
   width: 200px;
   cursor: pointer;
+  overflow: hidden;
 }
 
 img.video {
