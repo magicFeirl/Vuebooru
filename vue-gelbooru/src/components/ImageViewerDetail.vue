@@ -1,7 +1,19 @@
 <template>
-  <div class="detail">
+  <div
+    class="open-detail"
+    @click.stop="closeDetail = false"
+    v-show="closeDetail"
+  >
+    <i class="iconfont icon-toggle-right"></i>
+  </div>
+  <div class="detail" :class="{ close: closeDetail }">
     <div class="statistics">
-      <h2 class="title">Statistics</h2>
+      <h2 class="title">
+        Statistics
+        <span class="folder" @click="closeDetail = true">
+          <i class="iconfont icon-toggle-left"></i>
+        </span>
+      </h2>
       <span>
         Id: <a target="_blank" :href="gelbooruPostURL">{{ image.id }}</a>
       </span>
@@ -39,6 +51,7 @@ export default {
       type: Object,
       default: () => {},
     },
+    closeDetail: false,
   },
   computed: {
     tags() {
@@ -70,11 +83,53 @@ export default {
   background-color: rgba(34, 34, 34, 0.95);
   padding: 0.5rem 0.8rem;
   overflow-y: auto;
+  transition: flex 0.2s ease;
+  z-index: 1015;
 }
 .detail .title {
   font-size: 1.35rem;
   margin: 0;
   margin-top: 1rem;
+}
+
+.detail.close {
+  flex: 0;
+  padding: 0;
+}
+
+.open-detail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0.5rem 0.3rem;
+  border-radius: 0 5px 5px 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-flow: column wrap;
+  color: #ccc;
+  cursor: pointer;
+  z-index: 1010;
+}
+.open-detail .iconfont {
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+.open-detail:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.statistics .title {
+  display: flex;
+  width: 100%;
+}
+
+.title .folder {
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.title .folder:hover {
+  color: #337ab7;
 }
 
 .detail .statistics,
@@ -99,12 +154,13 @@ a {
   display: flex;
   width: 100%;
   flex-flow: column wrap;
-  align-items: stretch;
+  word-break: break-all;
 }
 
 .tag {
   cursor: pointer;
   color: #337ab7 !important;
+  line-height: 1.5;
 }
 
 a:hover,
@@ -112,13 +168,14 @@ a:hover,
   color: #78befc !important;
 }
 
-.toggle {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-100%);
-  right: 0;
-  width: 25px;
-  height: 25px;
-  background-color: white;
+@media screen and (max-width: 768px) {
+  .detail {
+    display: none;
+    flex: 0;
+  }
+
+  .open-detail {
+    display: none;
+  }
 }
 </style>

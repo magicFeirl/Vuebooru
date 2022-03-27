@@ -3,9 +3,10 @@
     <image-viewer-detail
       @close="closeViewer"
       :image="image"
+      :closeDetail="closeDetail"
     ></image-viewer-detail>
     <div @click="closeViewer" class="image-container" ref="imgViewer">
-      <div class="arrow-wrapper" @click.stop>
+      <div v-show="!closeDetail" class="arrow-wrapper" @click.stop>
         <div class="arrow left" @click="showPrevImage">
           <i class="iconfont icon-leftarrow"></i>
         </div>
@@ -58,6 +59,11 @@ export default {
     ...mapState("imageViewer", ["showImageViewer"]),
     ...mapGetters("imageViewer", ["image"]),
   },
+  data() {
+    return {
+      closeDetail: false,
+    };
+  },
   methods: {
     ...mapMutations(["incCurrentImageIndex"]),
     showPrevImage(index) {
@@ -73,6 +79,8 @@ export default {
       setTimeout(() => {
         this.$refs.imgViewer.scrollTo(0, event.clientY);
       }, 0);
+      // 放大图片时关闭 detail 栏
+      this.closeDetail = !this.closeDetail;
     },
     closeViewer() {
       this.$store.commit("imageViewer/closeImageViewer");
@@ -133,11 +141,11 @@ export default {
 }
 
 .arrow.left {
-  left: 30px;
+  left: 50px;
 }
 
 .arrow.right {
-  right: 30px;
+  right: 50px;
 }
 
 #img-viewer img {
@@ -155,5 +163,11 @@ img.original-size {
   max-height: unset !important;
   object-fit: unset !important;
   cursor: zoom-out !important;
+}
+
+@media screen and (max-width: 768px) {
+  .arrow-wrapper {
+    display: none;
+  }
 }
 </style>
