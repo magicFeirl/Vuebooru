@@ -16,5 +16,6 @@ export default {};
   padding: 20px;
   /* flex-wrap: wrap; */
   grid-template-columns: repeat(auto-fill, 200px);
+  justify-content: center;
 }
 </style>
