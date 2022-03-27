@@ -12,7 +12,6 @@ export default {};
 .image-list {
   width: 100%;
   display: flex;
-  justify-content: center;
   gap: 20px;
   padding: 20px;
   flex-wrap: wrap;

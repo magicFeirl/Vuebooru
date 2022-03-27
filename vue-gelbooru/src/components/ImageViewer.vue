@@ -1,30 +1,35 @@
 <template>
-  <div id="img-viewer">
+  <div id="img-viewer" v-if="showImageViewer">
     <div class="detail">
       <div class="score">
         <h2 class="title">
-          Score: <span>{{ img.score }}</span>
+          Score: <span>{{ image.score }}</span>
         </h2>
       </div>
       <div class="tags">
         <h2 class="title">Tags</h2>
-        <span class="tag" v-for="tag in img.tags.split(' ')" :key="tag">
+        <span
+          class="tag"
+          @click="jumpToTag(tag)"
+          v-for="tag in tags"
+          :key="tag"
+        >
           {{ tag }}
         </span>
       </div>
       <div class="owner">
         <h2 class="title">
-          Owner: <span>{{ img.owner }}</span>
+          Owner: <span>{{ image.owner }}</span>
         </h2>
       </div>
       <div class="created_at">
         <h2 class="title">Created At</h2>
-        <span>{{ img.created_at }}</span>
+        <span>{{ image.created_at }}</span>
       </div>
     </div>
     <div @click="closeViewer" class="image-container" ref="imgViewer">
       <video
-        v-if="isVideo(src)"
+        v-if="isAnimated(src)"
         @click.stop
         class="fit-video"
         :src="src"
@@ -32,6 +37,7 @@
         loop
         muted
         autoplay
+        ref="viewerImage"
       ></video>
       <img
         v-else
@@ -45,23 +51,31 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
-  emits: ["close"],
-  props: {
-    img: {
-      type: Object,
-    },
-  },
   computed: {
     src() {
-      if (this.isVideo(this.img.file_url)) {
-        return this.img.file_url;
+      if (
+        this.isAnimated(this.image.file_url) ||
+        this.image.file_url.endsWith("gif")
+      ) {
+        return this.image.file_url;
       } else {
-        return this.img.sample_url || this.img.file_url;
+        return this.image.sample_url || this.image.file_url;
       }
     },
+    tags() {
+      return this.image.tags.split(" ");
+    },
+    ...mapState("imageViewer", ["showImageViewer", "image"]),
   },
   methods: {
+    jumpToTag(search) {
+      this.closeViewer();
+      this.$router.push({ path: "/", query: { search, pid: 0 } });
+      this.$store.commit("search", search);
+    },
     zoomImage(event) {
       document.body.style.overflowY = "hidden";
       this.$refs.imgViewer.style.overflow = "auto";
@@ -71,11 +85,11 @@ export default {
       }, 0);
     },
     closeViewer() {
-      this.$emit("close");
+      this.$store.commit("imageViewer/closeImageViewer");
       document.body.style.overflowY = "auto";
       this.$refs.viewerImage.classList.remove("original-size");
     },
-    isVideo(url) {
+    isAnimated(url) {
       return url !== "" && (url.endsWith("webm") || url.endsWith("mp4"));
     },
   },
@@ -114,13 +128,13 @@ export default {
 }
 
 .detail .title {
-  color: #bbb;
   font-size: 1.5rem;
   margin: 0.5rem 0;
 }
 
-.title span {
-  font-size: 1.65rem;
+.detail .title,
+.detail span {
+  color: #ccc;
 }
 
 .tags {
@@ -129,8 +143,13 @@ export default {
   flex-flow: column wrap;
   align-items: stretch;
 }
-.detail span {
-  color: #bbb;
+
+.tag {
+  cursor: pointer;
+}
+
+.tag:hover {
+  color: #888;
 }
 
 #img-viewer img {

@@ -1,7 +1,6 @@
 <template>
-  <div class="thumb">
+  <div class="thumb" :class="{ video: isVideo(post.file_url) }">
     <img
-      :class="{ video: isVideo(post.file_url) }"
       :data-src="post.preview_url"
       :alt="post.tags"
       v-lazy
@@ -30,9 +29,15 @@ export default {
   width: 200px;
   cursor: pointer;
   overflow: hidden;
+  transition: transform 0.2s ease;
+  /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); */
 }
 
-img.video {
+.thumb:hover {
+  transform: translateY(-5px);
+}
+
+.thumb.video {
   outline: 2px solid blue;
 }
 

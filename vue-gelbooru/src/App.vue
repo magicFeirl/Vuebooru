@@ -1,27 +1,11 @@
 <script setup>
-import { ref } from "vue";
-import emitter from "./hooks/useMitt";
-import { SHOW_IMAGE_VIEWER } from "./constants";
-
 import ImageViewer from "./components/ImageViewer.vue";
-
-const currentPost = ref({});
-const showImageViewer = ref(false);
-
-emitter.on(SHOW_IMAGE_VIEWER, (post) => {
-  currentPost.value = post;
-  showImageViewer.value = true;
-});
 </script>
 
 <template>
   <teleport to="#image-viewer-container">
     <transition name="fade">
-      <image-viewer
-        v-if="showImageViewer"
-        @close="showImageViewer = false"
-        :img="currentPost"
-      ></image-viewer>
+      <image-viewer></image-viewer>
     </transition>
   </teleport>
 

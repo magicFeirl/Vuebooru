@@ -17,6 +17,7 @@ export default function (pid, search, posts) {
       // 搜索发生变化
       if (oldValues[1] !== undefined && newValues[1] !== oldValues[1]) {
         pid.value = 0;
+        posts.value = [];
       }
 
       loading.value = true;

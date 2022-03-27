@@ -10,12 +10,20 @@ export default function (pid, search) {
   const router = useRouter()
 
   watch([pid, search], (newValues, oldValues) => {
-    router.replace({
+    const [pid, search] = newValues;
+
+    const dest = {
       path: '/',
       query: {
-        pid: newValues[0],
-        search: newValues[1]
+        pid,
+        search
       }
-    })
+    }
+
+    if (pid === 0) {
+      router.push(dest)
+    } else {
+      router.replace(dest)
+    }
   })
 }
