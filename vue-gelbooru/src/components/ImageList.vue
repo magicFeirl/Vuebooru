@@ -11,9 +11,10 @@ export default {};
 <style scoped>
 .image-list {
   width: 100%;
-  display: flex;
+  display: grid;
   gap: 20px;
   padding: 20px;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
+  grid-template-columns: repeat(auto-fill, 200px);
 }
 </style>
