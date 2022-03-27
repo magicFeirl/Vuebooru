@@ -1,33 +1,18 @@
 <template>
   <div id="img-viewer" v-if="showImageViewer">
-    <div class="detail">
-      <div class="score">
-        <h2 class="title">
-          Score: <span>{{ image.score }}</span>
-        </h2>
-      </div>
-      <div class="tags">
-        <h2 class="title">Tags</h2>
-        <span
-          class="tag"
-          @click="jumpToTag(tag)"
-          v-for="tag in tags"
-          :key="tag"
-        >
-          {{ tag }}
-        </span>
-      </div>
-      <div class="owner">
-        <h2 class="title">
-          Owner: <span>{{ image.owner }}</span>
-        </h2>
-      </div>
-      <div class="created_at">
-        <h2 class="title">Created At</h2>
-        <span>{{ image.created_at }}</span>
-      </div>
-    </div>
+    <image-viewer-detail
+      @close="closeViewer"
+      :image="image"
+    ></image-viewer-detail>
     <div @click="closeViewer" class="image-container" ref="imgViewer">
+      <div class="arrow-wrapper" @click.stop>
+        <div class="arrow left" @click="showPrevImage">
+          <i class="iconfont icon-leftarrow"></i>
+        </div>
+        <div class="arrow right" @click="showNextImage">
+          <i class="iconfont icon-Rightarrow"></i>
+        </div>
+      </div>
       <video
         v-if="isAnimated(src)"
         @click.stop
@@ -51,9 +36,14 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapMutations, mapState } from "vuex";
+
+import ImageViewerDetail from "./ImageViewerDetail.vue";
 
 export default {
+  components: {
+    ImageViewerDetail,
+  },
   computed: {
     src() {
       if (
@@ -65,16 +55,16 @@ export default {
         return this.image.sample_url || this.image.file_url;
       }
     },
-    tags() {
-      return this.image.tags.split(" ");
-    },
-    ...mapState("imageViewer", ["showImageViewer", "image"]),
+    ...mapState("imageViewer", ["showImageViewer"]),
+    ...mapGetters("imageViewer", ["image"]),
   },
   methods: {
-    jumpToTag(search) {
-      this.closeViewer();
-      this.$router.push({ path: "/", query: { search, pid: 0 } });
-      this.$store.commit("search", search);
+    ...mapMutations(["incCurrentImageIndex"]),
+    showPrevImage(index) {
+      this.incCurrentImageIndex(-1);
+    },
+    showNextImage(index) {
+      this.incCurrentImageIndex(1);
     },
     zoomImage(event) {
       document.body.style.overflowY = "hidden";
@@ -116,40 +106,38 @@ export default {
   align-items: center;
   cursor: pointer;
   flex: 8 0 0;
+  position: relative;
 }
 
-#img-viewer .detail {
+.arrow {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: 1px solid #ccc;
+  top: 50%;
+  position: absolute;
+  transform: translateY(-100%);
   display: flex;
-  flex: 2 0 0;
-  flex-flow: column;
-  background-color: rgba(34, 34, 34, 0.95);
-  padding: 0.5rem 0.8rem;
-  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
 }
 
-.detail .title {
-  font-size: 1.5rem;
-  margin: 0.5rem 0;
+.arrow:hover {
+  transform: translateY(-100%) scale(1.15);
+}
+.arrow i.iconfont {
+  font-size: 20px;
+  margin-top: 1px;
+  color: white;
 }
 
-.detail .title,
-.detail span {
-  color: #ccc;
+.arrow.left {
+  left: 30px;
 }
 
-.tags {
-  display: flex;
-  width: 100%;
-  flex-flow: column wrap;
-  align-items: stretch;
-}
-
-.tag {
-  cursor: pointer;
-}
-
-.tag:hover {
-  color: #888;
+.arrow.right {
+  right: 30px;
 }
 
 #img-viewer img {

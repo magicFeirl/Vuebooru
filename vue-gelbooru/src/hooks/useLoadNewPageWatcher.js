@@ -4,12 +4,17 @@ import {
 } from 'vue'
 
 import {
+  useStore
+} from 'vuex'
+
+import {
   get_posts
 } from '../api'
 
 
 export default function (pid, search, posts) {
   let loading = ref(false);
+  const store = useStore();
 
   watch(
     [pid, search],
@@ -28,6 +33,8 @@ export default function (pid, search, posts) {
         } else {
           posts.value.push(...data['post']);
         }
+
+        store.commit('updatePosts', posts.value);
       }).finally(() => {
         loading.value = false;
       });

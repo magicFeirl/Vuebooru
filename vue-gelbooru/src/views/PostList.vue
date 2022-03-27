@@ -2,17 +2,25 @@
   <nav-header v-model:search="search"></nav-header>
   <image-list v-if="newPostLoaded">
     <image-list-item
-      v-for="post in posts"
+      v-for="(post, idx) in posts"
       :key="post.id"
       :post="post"
-      @click="showImageViewer(post)"
+      @click="showImageViewer(idx)"
     ></image-list-item>
     <div class="loading next-page-loading" v-if="loading">
       <h3>Loading page {{ pid + 1 }}</h3>
     </div>
   </image-list>
   <div class="loading" v-else>
-    <h3>Now loading page {{ pid + 1 }}...</h3>
+    <h3 v-if="loading">Now loading page {{ pid + 1 }}...</h3>
+    <h3 v-else>
+      Nobody here but us chickens!
+      <br />
+      <i
+        >Check your blacklist. We now automatically omit terms from your search
+        when you have any tag there.</i
+      >
+    </h3>
   </div>
 </template>
 
@@ -37,11 +45,12 @@ const pid = _pid ? ref(_pid) : ref(0);
 const search = ref(query.search || store.state.search);
 const posts = ref([]);
 
-const showImageViewer = (image) => {
-  store.commit("imageViewer/showImageViewer", image);
+const showImageViewer = (index) => {
+  store.commit("setCurrentImageIndex", index);
+  store.commit("imageViewer/showImageViewer");
 };
 
-const newPostLoaded = computed(() => posts.value.length > 0);
+const newPostLoaded = computed(() => posts.value?.length > 0);
 
 const loading = useLoadNewPageWatcher(pid, search, posts);
 useRouteQueryAutoUpdateWatcher(pid, search);
