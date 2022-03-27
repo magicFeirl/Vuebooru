@@ -45,13 +45,18 @@
 
 <script>
 export default {
-  emits: ["close"],
+  emits: ["close", "toggle"],
   props: {
     image: {
       type: Object,
       default: () => {},
     },
     closeDetail: false,
+  },
+  watch: {
+    closeDetail() {
+      this.$emit("toggle", this.closeDetail);
+    },
   },
   computed: {
     tags() {
@@ -66,7 +71,6 @@ export default {
   },
   methods: {
     jumpToTag(search) {
-      this.$emit("close");
       this.$router.push({ path: "/", query: { search, pid: 0 } });
       this.$store.commit("search", search);
     },

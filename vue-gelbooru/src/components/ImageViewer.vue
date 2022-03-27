@@ -2,6 +2,7 @@
   <div id="img-viewer" v-if="showImageViewer">
     <image-viewer-detail
       @close="closeViewer"
+      @toggle="toggleDetail"
       :image="image"
       :closeDetail="closeDetail"
     ></image-viewer-detail>
@@ -66,10 +67,13 @@ export default {
   },
   methods: {
     ...mapMutations(["incCurrentImageIndex"]),
-    showPrevImage(index) {
+    isZoomInImage() {
+      return this.$refs.viewerImage.classList.contains("original-size");
+    },
+    showPrevImage() {
       this.incCurrentImageIndex(-1);
     },
-    showNextImage(index) {
+    showNextImage() {
       this.incCurrentImageIndex(1);
     },
     zoomImage(event) {
@@ -80,7 +84,10 @@ export default {
         this.$refs.imgViewer.scrollTo(0, event.clientY);
       }, 0);
       // 放大图片时关闭 detail 栏
-      this.closeDetail = !this.closeDetail;
+      this.closeDetail = this.isZoomInImage();
+    },
+    toggleDetail(detailState) {
+      this.closeDetail = detailState;
     },
     closeViewer() {
       this.$store.commit("imageViewer/closeImageViewer");
@@ -115,6 +122,10 @@ export default {
   cursor: pointer;
   flex: 8 0 0;
   position: relative;
+}
+
+.arrow-wrapper {
+  z-index: 1001;
 }
 
 .arrow {
