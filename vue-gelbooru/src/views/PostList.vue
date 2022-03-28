@@ -1,6 +1,6 @@
 <template>
   <nav-header v-model:search="search"></nav-header>
-  <image-list v-if="newPostLoaded">
+  <image-list ref="imageListRef" v-if="newPostLoaded">
     <image-list-item
       v-for="(post, idx) in posts"
       :key="post.id"
@@ -64,14 +64,24 @@ watch(
   }
 );
 
-useInfiniteScroll(
+const imageListRef = ref(null);
+
+watch(
+  imageListRef,
   () => {
-    if (!loading.value) {
-      pid.value++;
-    }
+    console.log("bind event listener");
+    useInfiniteScroll(
+      imageListRef.value.$el,
+      () => {
+        if (!loading.value) {
+          pid.value++;
+        }
+      },
+      300,
+      25
+    );
   },
-  300,
-  25
+  { once: true }
 );
 </script>
 
@@ -81,6 +91,10 @@ useInfiniteScroll(
   margin-top: 18%;
   color: #999;
   width: 100%;
+}
+
+.loading h3 {
+  text-align: center;
 }
 
 .next-page-loading {

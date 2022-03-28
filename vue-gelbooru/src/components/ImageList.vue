@@ -5,7 +5,9 @@
 </template>
 
 <script>
-export default {};
+export default {
+  inheritAttributes: false,
+};
 </script>
 
 <style scoped>
@@ -15,6 +17,8 @@ export default {};
   gap: 20px;
   padding: 20px;
   /* flex-wrap: wrap; */
+  height: calc(100vh - 56px);
+  overflow: auto;
   grid-template-columns: repeat(auto-fill, 200px);
   justify-content: center;
 }

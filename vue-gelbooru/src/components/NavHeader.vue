@@ -7,6 +7,9 @@
       class="search"
     />
     <button>Search</button>
+    <div class="account">
+      <span class="login"> login </span>
+    </div>
   </div>
 </template>
 
@@ -50,6 +53,7 @@ input.search {
   max-width: 70vw;
   flex: 1;
   border: 1px solid #ccc;
+  margin-left: auto;
 }
 
 .search-container button,
@@ -59,7 +63,7 @@ input.search {
 }
 
 .search-container button {
-  margin-left: 0.5rem;
+  margin: 0 0.5rem;
   background-color: #0773fb;
   color: white;
   cursor: pointer;
@@ -67,9 +71,17 @@ input.search {
   width: 7rem;
   outline: none;
   border-radius: 5px;
+
 }
 
 .search-container button:hover {
   background: rgb(251, 179, 7);
+}
+
+.account {
+  margin-left: auto;
+  color: #0773fb;
+  font-weight: 600;
+  cursor: pointer;
 }
 </style>

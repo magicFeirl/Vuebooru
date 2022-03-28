@@ -79,7 +79,7 @@ export default {
       this.incCurrentImageIndex(1);
     },
     zoomImage(event) {
-      document.body.style.overflowY = "hidden";
+      // document.body.style.overflowY = "hidden";
       this.showOriginalSize = !this.showOriginalSize;
       setTimeout(() => {
         this.$refs.imgViewer.scrollTo(0, event.clientY);
@@ -92,7 +92,7 @@ export default {
     },
     closeViewer() {
       this.$store.commit("imageViewer/closeImageViewer");
-      document.body.style.overflowY = "auto";
+      // document.body.style.overflowY = "auto";
       this.showOriginalSize = false;
     },
     isAnimated(url) {
