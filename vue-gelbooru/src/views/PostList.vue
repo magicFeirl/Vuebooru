@@ -69,7 +69,6 @@ const imageListRef = ref(null);
 watch(
   imageListRef,
   () => {
-    console.log("bind event listener");
     useInfiniteScroll(
       imageListRef.value.$el,
       () => {

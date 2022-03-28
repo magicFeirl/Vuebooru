@@ -1,14 +1,10 @@
 <script setup>
 import ImageViewer from "./components/ImageViewer.vue";
+import DialogBox from "./components/DialogBox.vue";
 </script>
 
 <template>
-  <teleport to="#image-viewer-container">
-    <transition name="fade">
-      <image-viewer></image-viewer>
-    </transition>
-  </teleport>
-
+  <image-viewer></image-viewer>
   <router-view></router-view>
 </template>
 
@@ -16,15 +12,5 @@ import ImageViewer from "./components/ImageViewer.vue";
 #app {
   height: 100vh;
   overflow: hidden;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>

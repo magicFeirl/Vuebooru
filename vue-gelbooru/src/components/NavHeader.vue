@@ -1,5 +1,7 @@
 <template>
+  <login-dialog v-model:show="showLoginDialog"></login-dialog>
   <div class="search-container">
+    <div class="space"></div>
     <input
       v-model.lazy.trim="_search"
       type="text"
@@ -7,15 +9,21 @@
       class="search"
     />
     <button>Search</button>
+    <div class="space"></div>
     <div class="account">
-      <span class="login"> login </span>
+      <span class="login" @click="showLoginDialog = true">Login</span>
     </div>
   </div>
 </template>
 
 <script>
+import LoginDialog from "./LoginDialog.vue";
+
 export default {
   emits: ["update:search"],
+  components: {
+    LoginDialog,
+  },
   props: {
     search: {
       type: String,
@@ -32,10 +40,19 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      showLoginDialog: false,
+    };
+  },
 };
 </script>
 
 <style scoped>
+.space {
+  flex: 1;
+}
+
 .search-container {
   width: 100%;
   display: flex;
@@ -50,10 +67,9 @@ export default {
 }
 
 input.search {
-  max-width: 70vw;
-  flex: 1;
+  width: 70vw;
+  flex: 2;
   border: 1px solid #ccc;
-  margin-left: auto;
 }
 
 .search-container button,
@@ -68,10 +84,9 @@ input.search {
   color: white;
   cursor: pointer;
   border: none;
-  width: 7rem;
+  width: 6rem;
   outline: none;
   border-radius: 5px;
-
 }
 
 .search-container button:hover {
@@ -79,9 +94,13 @@ input.search {
 }
 
 .account {
-  margin-left: auto;
+  margin-right: 2rem;
   color: #0773fb;
   font-weight: 600;
   cursor: pointer;
+}
+
+.account:hover {
+  color: rgb(251, 179, 7);
 }
 </style>

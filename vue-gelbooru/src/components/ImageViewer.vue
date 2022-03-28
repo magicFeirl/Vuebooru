@@ -1,44 +1,48 @@
 <template>
-  <div id="img-viewer" v-if="showImageViewer">
-    <image-viewer-detail
-      @close="closeViewer"
-      @toggle="toggleDetail"
-      :image="image"
-      :closeDetail="closeDetail"
-    ></image-viewer-detail>
-    <div
-      @click="closeViewer"
-      class="image-container"
-      :class="{ 'original-size': showOriginalSize }"
-      ref="imgViewer"
-    >
-      <div v-if="!showOriginalSize" class="arrow-wrapper" @click.stop>
-        <div class="arrow left" @click="showPrevImage">
-          <i class="iconfont icon-leftarrow"></i>
-        </div>
-        <div class="arrow right" @click="showNextImage">
-          <i class="iconfont icon-Rightarrow"></i>
+  <teleport to="#image-viewer-container">
+    <transition name="fade">
+      <div id="img-viewer" v-if="showImageViewer">
+        <image-viewer-detail
+          @close="closeViewer"
+          @toggle="toggleDetail"
+          :image="image"
+          :closeDetail="closeDetail"
+        ></image-viewer-detail>
+        <div
+          @click="closeViewer"
+          class="image-container"
+          :class="{ 'original-size': showOriginalSize }"
+          ref="imgViewer"
+        >
+          <div v-if="!showOriginalSize" class="arrow-wrapper" @click.stop>
+            <div class="arrow left" @click="showPrevImage">
+              <i class="iconfont icon-leftarrow"></i>
+            </div>
+            <div class="arrow right" @click="showNextImage">
+              <i class="iconfont icon-Rightarrow"></i>
+            </div>
+          </div>
+          <video
+            v-if="isAnimated(src)"
+            @click.stop
+            class="fit-video"
+            :src="src"
+            controls
+            loop
+            muted
+            autoplay
+          ></video>
+          <img
+            v-else
+            :class="{ 'original-size': showOriginalSize }"
+            @click.stop="zoomImage($event)"
+            :src="src"
+            alt=""
+          />
         </div>
       </div>
-      <video
-        v-if="isAnimated(src)"
-        @click.stop
-        class="fit-video"
-        :src="src"
-        controls
-        loop
-        muted
-        autoplay
-      ></video>
-      <img
-        v-else
-        :class="{ 'original-size': showOriginalSize }"
-        @click.stop="zoomImage($event)"
-        :src="src"
-        alt=""
-      />
-    </div>
-  </div>
+    </transition>
+  </teleport>
 </template>
 
 <script>
