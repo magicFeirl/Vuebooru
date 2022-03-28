@@ -1,19 +1,22 @@
 export default {
   namespaced: true,
   state: {
-    showImageViewer: false
+    showImageViewer: false,
+    image: {},
+    index: 0
   },
   mutations: {
-    showImageViewer(state) {
+    setImage(state, payload) {
+      const {
+        index,
+        image
+      } = payload;
+      state.image = image;
+      state.index = index;
       state.showImageViewer = true;
     },
     closeImageViewer(state) {
       state.showImageViewer = false;
     }
   },
-  getters: {
-    image(state, getters, rootState, rootGetters) {
-      return rootGetters.currentImage;
-    }
-  }
 }

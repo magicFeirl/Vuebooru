@@ -46,11 +46,12 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapState } from "vuex";
 
 import ImageViewerDetail from "./ImageViewerDetail.vue";
 
 export default {
+  emits: ["showPrevImage", "showNextImage"],
   components: {
     ImageViewerDetail,
   },
@@ -65,8 +66,7 @@ export default {
         return this.image.sample_url || this.image.file_url;
       }
     },
-    ...mapState("imageViewer", ["showImageViewer"]),
-    ...mapGetters("imageViewer", ["image"]),
+    ...mapState("imageViewer", ["showImageViewer", "image"]),
   },
   data() {
     return {
@@ -75,12 +75,11 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["incCurrentImageIndex"]),
     showPrevImage() {
-      this.incCurrentImageIndex(-1);
+      this.$emit("showPrevImage");
     },
     showNextImage() {
-      this.incCurrentImageIndex(1);
+      this.$emit("showNextImage");
     },
     zoomImage(event) {
       // document.body.style.overflowY = "hidden";

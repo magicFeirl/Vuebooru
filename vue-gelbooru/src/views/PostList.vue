@@ -1,5 +1,9 @@
 <template>
   <nav-header v-model:search="search"></nav-header>
+  <image-viewer
+    @showPrevImage="handleShowPrevImage"
+    @showNextImage="handleShowNextImage"
+  ></image-viewer>
   <image-list ref="imageListRef" v-if="newPostLoaded">
     <image-list-item
       v-for="(post, idx) in posts"
@@ -29,6 +33,7 @@ import { ref, watch, computed } from "vue";
 
 import ImageList from "../components/ImageList.vue";
 import ImageListItem from "../components/ImageListItem.vue";
+import ImageViewer from "../components/ImageViewer.vue";
 import NavHeader from "../components/NavHeader.vue";
 
 import useLoadNewPageWatcher from "../hooks/useLoadNewPageWatcher";
@@ -46,15 +51,18 @@ const search = ref(query.search || store.state.search);
 const posts = ref([]);
 
 const showImageViewer = (index) => {
-  store.commit("setCurrentImageIndex", index);
-  store.commit("imageViewer/showImageViewer");
+  store.commit("imageViewer/setImage", { index, image: posts.value[index] });
 };
 
 const newPostLoaded = computed(() => posts.value?.length > 0);
 
+// 加载新页面 watcher
 const loading = useLoadNewPageWatcher(pid, search, posts);
+
+// 路由参数自动更新 watcher
 useRouteQueryAutoUpdateWatcher(pid, search);
 
+// 监听路由变化，发送请求
 watch(
   () => store.state.search,
   () => {
@@ -64,8 +72,8 @@ watch(
   }
 );
 
+// 注册无限滚动
 const imageListRef = ref(null);
-
 watch(
   imageListRef,
   () => {
@@ -82,6 +90,22 @@ watch(
   },
   { once: true }
 );
+
+const handleShowImage = (step) => {
+  const index = store.state.imageViewer.index + step;
+  store.commit("imageViewer/setImage", {
+    index,
+    image: posts.value[index],
+  });
+};
+
+const handleShowPrevImage = () => {
+  handleShowImage(-1);
+};
+
+const handleShowNextImage = () => {
+  handleShowImage(1);
+};
 </script>
 
 <style scoped>

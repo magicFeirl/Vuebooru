@@ -3,10 +3,18 @@
     <form class="login-form">
       <h3>Login</h3>
       <span class="register">
-        Don't have an account?<a href="#"> Register!</a>
+        Don't have an account?
+        <a href="https://gelbooru.com/index.php?page=account&s=reg">
+          Register!
+        </a>
       </span>
       <input autocomplete id="username" type="text" placeholder="username" />
-      <input autocomplete id="password" type="password" placeholder="password" />
+      <input
+        autocomplete
+        id="password"
+        type="password"
+        placeholder="password"
+      />
       <button>Login</button>
     </form>
   </dialog-box>
@@ -43,6 +51,7 @@ export default {
 .login-form h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
+  color: #0773fb;
 }
 
 .login-form input {
@@ -72,13 +81,14 @@ export default {
 .login-form .register {
   margin-bottom: 1.5rem;
   font-size: 0.8rem;
+  color: #006ffa;
 }
 
 .register a {
-  color: #333;
+  color: #006ffa;
 }
 
 .register a:hover {
-  color: #000;
+  color: rgb(251, 179, 7);
 }
 </style>
