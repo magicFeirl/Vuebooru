@@ -16,7 +16,7 @@
     </div>
   </image-list>
   <div class="loading" v-else>
-    <h3 v-if="loading">Now loading page {{ pid + 1 }}...</h3>
+    <h3 v-if="loading">loading page {{ pid + 1 }}...</h3>
     <h3 v-else>
       Nobody here but us chickens!
       <br />
@@ -74,22 +74,21 @@ watch(
 
 // 注册无限滚动
 const imageListRef = ref(null);
-watch(
-  imageListRef,
-  () => {
-    useInfiniteScroll(
-      imageListRef.value.$el,
-      () => {
-        if (!loading.value) {
-          pid.value++;
-        }
-      },
-      300,
-      25
-    );
-  },
-  { once: true }
-);
+watch(imageListRef, () => {
+  if (!imageListRef.value) {
+    return;
+  }
+  useInfiniteScroll(
+    imageListRef.value.$el,
+    () => {
+      if (!loading.value) {
+        pid.value++;
+      }
+    },
+    300,
+    25
+  );
+});
 
 const handleShowImage = (step) => {
   const index = store.state.imageViewer.index + step;
