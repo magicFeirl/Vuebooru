@@ -3,6 +3,7 @@
     class="open-detail"
     @click.stop="closeDetail = false"
     v-show="closeDetail"
+    title="open detail"
   >
     <i class="iconfont icon-toggle-right"></i>
   </div>
@@ -10,7 +11,7 @@
     <div class="statistics">
       <h2 class="title">
         Statistics
-        <span class="folder" @click="closeDetail = true">
+        <span class="folder" title="close detail" @click="closeDetail = true">
           <i class="iconfont icon-toggle-left"></i>
         </span>
       </h2>

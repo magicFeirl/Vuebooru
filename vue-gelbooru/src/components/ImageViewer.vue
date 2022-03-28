@@ -6,8 +6,13 @@
       :image="image"
       :closeDetail="closeDetail"
     ></image-viewer-detail>
-    <div @click="closeViewer" class="image-container" ref="imgViewer">
-      <div v-show="!closeDetail" class="arrow-wrapper" @click.stop>
+    <div
+      @click="closeViewer"
+      class="image-container"
+      :class="{ 'original-size': showOriginalSize }"
+      ref="imgViewer"
+    >
+      <div v-if="!showOriginalSize" class="arrow-wrapper" @click.stop>
         <div class="arrow left" @click="showPrevImage">
           <i class="iconfont icon-leftarrow"></i>
         </div>
@@ -24,11 +29,10 @@
         loop
         muted
         autoplay
-        ref="viewerImage"
       ></video>
       <img
         v-else
-        ref="viewerImage"
+        :class="{ 'original-size': showOriginalSize }"
         @click.stop="zoomImage($event)"
         :src="src"
         alt=""
@@ -63,13 +67,11 @@ export default {
   data() {
     return {
       closeDetail: false,
+      showOriginalSize: false,
     };
   },
   methods: {
     ...mapMutations(["incCurrentImageIndex"]),
-    isZoomInImage() {
-      return this.$refs.viewerImage.classList.contains("original-size");
-    },
     showPrevImage() {
       this.incCurrentImageIndex(-1);
     },
@@ -78,13 +80,12 @@ export default {
     },
     zoomImage(event) {
       document.body.style.overflowY = "hidden";
-      this.$refs.imgViewer.style.overflow = "auto";
-      this.$refs.viewerImage.classList.toggle("original-size");
+      this.showOriginalSize = !this.showOriginalSize;
       setTimeout(() => {
         this.$refs.imgViewer.scrollTo(0, event.clientY);
       }, 0);
       // 放大图片时关闭 detail 栏
-      this.closeDetail = this.isZoomInImage();
+      this.closeDetail = this.showOriginalSize;
     },
     toggleDetail(detailState) {
       this.closeDetail = detailState;
@@ -92,7 +93,7 @@ export default {
     closeViewer() {
       this.$store.commit("imageViewer/closeImageViewer");
       document.body.style.overflowY = "auto";
-      this.$refs.viewerImage.classList.remove("original-size");
+      this.showOriginalSize = false;
     },
     isAnimated(url) {
       return url !== "" && (url.endsWith("webm") || url.endsWith("mp4"));
@@ -122,6 +123,10 @@ export default {
   cursor: pointer;
   flex: 8 0 0;
   position: relative;
+}
+
+.image-container.original-size {
+  overflow: auto;
 }
 
 .arrow-wrapper {
