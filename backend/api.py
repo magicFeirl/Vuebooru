@@ -1,0 +1,5 @@
+POST_LIST_API = 'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1'
+LOGIN_API = 'https://gelbooru.com/index.php?page=account&s=login&code=00'
+FAVORITE_API = 'https://gelbooru.com/public/addfav.php'
+UNFAVORITE_API = 'https://gelbooru.com/index.php?page=favorites&s=delete'
+POST_INFO_API = 'https://gelbooru.com/index.php?page=post&s=view'
