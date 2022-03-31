@@ -1,8 +1,8 @@
 import os
 from typing import Optional
 
-from aiohttp import ClientSession, TCPConnector
-from fastapi import Cookie, Depends, FastAPI, Request, Response
+from aiohttp import ClientSession, TCPConnector, DummyCookieJar
+from fastapi import Cookie, Depends, FastAPI, Request, Response, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from lxml.html import fromstring
@@ -14,7 +14,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="*",
+    allow_origins=['http://127.0.0.1:4000'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,7 +25,9 @@ PROXY = "http://127.0.0.1:1081"
 os.environ["HTTP_PROXY"] = PROXY
 os.environ["HTTPS_PROXY"] = PROXY
 
-session = ClientSession(trust_env=True, connector=TCPConnector(ssl=False))
+jar = DummyCookieJar()
+connector = TCPConnector(ssl=False)
+session = ClientSession(trust_env=True, connector=connector, cookie_jar=jar)
 
 
 class UserNotLoginError(Exception):
@@ -57,10 +59,10 @@ def user_cookie_depend(no_login_error=True):
 
 
 @app.post("/login")
-async def login(response: Response, username: str, password: str):
+async def login(response: Response, username: str = Body(None), password: str = Body(None)):
     data = {"user": username, "pass": password, "submit": "Log in"}
 
-    async with session.post(LOGIN_API, data=data, allow_redirects=False) as resp:
+    async with session.post(LOGIN_API, headers={}, data=data, allow_redirects=False) as resp:
         cookies = resp.cookies
 
     if "pass_hash" not in cookies or "user_id" not in cookies:
@@ -80,7 +82,7 @@ async def login(response: Response, username: str, password: str):
     response.set_cookie(**parse_cookie_info(cookies, "user_id"))
 
     return {
-        "code": "200",
+        "code": 200,
         "message": "Login successed",
         "user_id": cookies["user_id"].value,
     }
