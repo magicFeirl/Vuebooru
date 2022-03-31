@@ -1,3 +1,7 @@
+import {
+  get_posts_tags
+} from '../../api'
+
 export default {
   namespaced: true,
   state: {
@@ -6,11 +10,21 @@ export default {
     index: 0
   },
   mutations: {
-    setImage(state, payload) {
+    async setImage(state, payload) {
       const {
         index,
         image
       } = payload;
+
+      if (!image.cached) {
+        const {
+          data
+        } = await get_posts_tags(image.id);
+        image.tags = data.tags;
+        image.favorited = data.favorited;
+        image.cached = true;
+      }
+
       state.image = image;
       state.index = index;
       state.showImageViewer = true;

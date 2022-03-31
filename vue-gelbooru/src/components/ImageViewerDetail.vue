@@ -33,18 +33,35 @@
     <div class="options">
       <h2 class="title">Options</h2>
       <span><a target="_blank" :href="image.file_url">Original Image</a></span>
+      <span @click="addPostToFavorite">
+        <a href="javascript:(0);">{{
+          favorited ? "Unfavorite" : "Add to favorite"
+        }}</a>
+      </span>
     </div>
     <div class="tags">
       <h2 class="title">Tags</h2>
-      <span class="tag" @click="jumpToTag(tag)" v-for="tag in tags" :key="tag">
-        {{ tag }}
-      </span>
+      <template v-for="(tag_names, tag_type) in tags">
+        <template v-if="tag_names.length > 0">
+          <h4 class="title">{{ tag_type }}</h4>
+          <span
+            class="tag"
+            @click="jumpToTag(tag)"
+            v-for="tag in tag_names"
+            :key="tag"
+          >
+            {{ decodeURIComponent(tag) }}
+          </span>
+        </template>
+      </template>
     </div>
     <!-- <div class="toggle"></div> -->
   </div>
 </template>
 
 <script>
+import { favorite, unfavorite } from "../api";
+
 export default {
   emits: ["close", "toggle"],
   props: {
@@ -60,20 +77,38 @@ export default {
     },
   },
   computed: {
-    tags() {
-      return this.image.tags.split(" ");
-    },
     gelbooruPostURL() {
       return `https://gelbooru.com/index.php?page=post&s=view&id=${this.image.id}`;
     },
     gelbooruUserURL() {
       return `https://gelbooru.com/index.php?page=account&s=profile&id=${this.image.creator_id}`;
     },
+    tags() {
+      return this.image.tags;
+    },
+    favorited: {
+      get() {
+        return this.image.favorited;
+      },
+      set(value) {
+        return (this.image.favorited = value);
+      },
+    },
   },
   methods: {
     jumpToTag(search) {
+      search = decodeURIComponent(search);
       this.$router.push({ path: "/", query: { search, pid: 0 } });
       this.$store.commit("search", search);
+      this.$store.commit("imageViewer/closeImageViewer");
+    },
+    async addPostToFavorite() {
+      if (this.favorited) {
+        await unfavorite(this.image.id);
+      } else {
+        const { message } = await favorite(this.image.id);
+      }
+      this.favorited = !this.favorited;
     },
   },
 };
@@ -95,6 +130,11 @@ export default {
   font-size: 1.35rem;
   margin: 0;
   margin-top: 1rem;
+}
+
+h4.title {
+  font-size: 1.15rem !important;
+  margin: 0.5rem 0 0.2rem 0 !important;
 }
 
 .detail.close {

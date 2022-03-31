@@ -1,6 +1,6 @@
 <template>
   <dialog-box :show="show" @close="closeDialog">
-    <form class="login-form">
+    <div class="login-form">
       <h3>Login</h3>
       <span class="register">
         Don't have an account?
@@ -8,27 +8,60 @@
           Register!
         </a>
       </span>
-      <input autocomplete id="username" type="text" placeholder="username" />
+      <input
+        v-model.trim.lazy="username"
+        autocomplete
+        id="username"
+        type="text"
+        placeholder="username"
+      />
       <input
         autocomplete
+        v-model.trim.lazy="password"
         id="password"
         type="password"
         placeholder="password"
       />
-      <button>Login</button>
-    </form>
+      <button @click="login">Login</button>
+    </div>
   </dialog-box>
 </template>
 
 <script>
 import DialogBox from "./DialogBox.vue";
+import { login } from "../api";
+import { mapMutations } from "vuex";
 
 export default {
   props: {
     show: false,
   },
   emits: ["update:show"],
+  data() {
+    return {
+      username: "",
+      password: "",
+    };
+  },
   methods: {
+    ...mapMutations({
+      user_login: "login",
+    }),
+    async login() {
+      if (!this.username.length || !this.password.length) {
+        return;
+      }
+
+      const data = await login(this.username, this.password);
+
+      if (data.code === 200) {
+        this.user_login(data.user_id);
+      } else {
+        console.log("failed");
+      }
+
+      this.closeDialog();
+    },
     closeDialog() {
       this.$emit("update:show");
     },

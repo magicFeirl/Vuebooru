@@ -2,22 +2,31 @@
   <login-dialog v-model:show="showLoginDialog"></login-dialog>
   <div class="search-container">
     <div class="space"></div>
-    <input
-      v-model.lazy.trim="_search"
-      type="text"
-      placeholder="Ex: blue_sky 1girl"
-      class="search"
-    />
-    <button>Search</button>
+    <div>
+      <input
+        v-model.lazy.trim="_search"
+        type="text"
+        placeholder="Ex: blue_sky 1girl"
+        class="search"
+      />
+      <button>Search</button>
+    </div>
     <div class="space"></div>
     <div class="account">
-      <span class="login" @click="showLoginDialog = true">Login</span>
+      <span v-if="!login" class="login" @click="showLoginDialog = true"
+        >Login</span
+      >
+      <div v-else>
+        <span>My Favorites</span>
+        <span @click="logout" style="margin-left: 1rem">Logout</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import LoginDialog from "./LoginDialog.vue";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   emits: ["update:search"],
@@ -30,6 +39,9 @@ export default {
       default: "",
     },
   },
+  methods: {
+    ...mapMutations(["logout"]),
+  },
   computed: {
     _search: {
       get() {
@@ -39,6 +51,7 @@ export default {
         this.$emit("update:search", newValue);
       },
     },
+    ...mapState(["login", "user_id"]),
   },
   data() {
     return {
@@ -67,7 +80,7 @@ export default {
 }
 
 input.search {
-  width: 70vw;
+  width: 50vw;
   flex: 2;
   border: 1px solid #ccc;
 }
@@ -100,7 +113,7 @@ input.search {
   cursor: pointer;
 }
 
-.account:hover {
+.account span:hover {
   color: rgb(251, 179, 7);
 }
 </style>

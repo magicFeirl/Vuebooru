@@ -42,7 +42,8 @@ import useRouteQueryAutoUpdateWatcher from "../hooks/useRouteQueryAutoUpdateWatc
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
-const { query } = useRoute();
+const route = useRoute();
+const { query } = route;
 const store = useStore();
 
 const _pid = parseInt(query.pid);
@@ -61,6 +62,14 @@ const loading = useLoadNewPageWatcher(pid, search, posts);
 
 // 路由参数自动更新 watcher
 useRouteQueryAutoUpdateWatcher(pid, search);
+
+watch(
+  () => route.query.search,
+  (newValue) => {
+    store.commit("search", newValue);
+    search.value = newValue;
+  }
+);
 
 // 监听路由变化，发送请求
 watch(
