@@ -1,6 +1,7 @@
 import os
-from typing import Optional
+from typing import List, Optional
 
+from pydantic import BaseModel
 from aiohttp import ClientSession, TCPConnector, DummyCookieJar
 from fastapi import Cookie, Depends, FastAPI, Request, Response, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -157,7 +158,24 @@ async def favorite(id: str, cookie_header=Depends(user_cookie_depend())):
     }
 
 
-@app.get("/")
+class PostModel(BaseModel):
+    id: str
+    created_at: str
+    score: int
+    source: str
+    owner: str
+    creator_id: str
+    tags: str
+    title: str
+    file_url: str
+    sample_url: str
+    preview_url: str
+class PostsResponse(BaseModel):
+    code: int
+    message: str
+    data: List[PostModel]
+
+@app.get("/", response_model=PostsResponse)
 async def load_posts(pid: int, tags: str = None, limit: int = 42):
     params = {"pid": pid, "limit": limit}
 
@@ -167,4 +185,8 @@ async def load_posts(pid: int, tags: str = None, limit: int = 42):
     async with session.get(POST_LIST_API, params=params) as resp:
         result = await resp.json()
 
-    return result
+    return {
+        'code': 200,
+        'message': 'get post list success',
+        'data': result['post']
+    }
