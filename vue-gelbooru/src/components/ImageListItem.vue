@@ -1,10 +1,6 @@
 <template>
   <div class="thumb" :class="{ video: isVideo(post.file_url) }">
-    <img
-      :data-src="post.preview_url"
-      :alt="post.tags"
-      v-lazy
-    />
+    <img :data-src="post.preview_url" :alt="`post. ${post.id}`" v-lazy />
   </div>
 </template>
 
@@ -44,6 +40,7 @@ export default {
 .thumb > img {
   object-fit: contain;
   width: 100%;
+  display: block;
   height: 100%;
 }
 </style>

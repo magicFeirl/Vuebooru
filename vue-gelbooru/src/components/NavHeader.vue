@@ -17,7 +17,7 @@
         >Login</span
       >
       <div v-else>
-        <span>My Favorites</span>
+        <span @click="showMyFavorites">My Favorites</span>
         <span @click="logout" style="margin-left: 1rem">Logout</span>
       </div>
     </div>
@@ -40,7 +40,13 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["logout"]),
+    ...mapMutations({
+      logout: "logout",
+      searchFav: "search",
+    }),
+    showMyFavorites() {
+      this.searchFav("fav:" + this.user_id);
+    },
   },
   computed: {
     _search: {

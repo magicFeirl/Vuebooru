@@ -44,14 +44,15 @@
       <template v-for="(tag_names, tag_type) in tags">
         <template v-if="tag_names.length > 0">
           <h4 class="title">{{ tag_type }}</h4>
-          <span
+          <router-link
             class="tag"
             @click="jumpToTag(tag)"
+            :to="{ path: '/', query: { search: tag } }"
             v-for="tag in tag_names"
             :key="tag"
           >
             {{ decodeURIComponent(tag) }}
-          </span>
+          </router-link>
         </template>
       </template>
     </div>
@@ -103,12 +104,16 @@ export default {
       this.$store.commit("imageViewer/closeImageViewer");
     },
     async addPostToFavorite() {
-      if (this.favorited) {
-        await unfavorite(this.image.id);
-      } else {
-        const { message } = await favorite(this.image.id);
+      const func_map = {
+        true: unfavorite,
+        false: favorite,
+      };
+
+      const { message, code } = await func_map[this.favorited](this.image.id);
+
+      if (code === 200) {
+        this.favorited = !this.favorited;
       }
-      this.favorited = !this.favorited;
     },
   },
 };

@@ -24,9 +24,10 @@ export default function (pid, search, posts) {
 
       get_posts(pid.value, search.value).then((data) => {
         if (pid.value === 0) {
-          posts.value = data['post'];
+          posts.value = data['data'];
         } else {
-          posts.value.push(...data['post']);
+          // posts.value = data['data'];
+          posts.value.push(...data['data']);
         }
       }).finally(() => {
         loading.value = false;

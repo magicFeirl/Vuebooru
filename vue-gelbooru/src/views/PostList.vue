@@ -30,6 +30,7 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
+import { RecycleScroller } from "vue-virtual-scroller";
 
 import ImageList from "../components/ImageList.vue";
 import ImageListItem from "../components/ImageListItem.vue";
