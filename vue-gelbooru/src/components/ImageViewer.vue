@@ -66,6 +66,9 @@ export default {
         return this.image.sample_url || this.image.file_url;
       }
     },
+    minWidthLess768() {
+      return window.innerWidth <= 768;
+    },
     ...mapState("imageViewer", ["showImageViewer", "image"]),
   },
   data() {
@@ -73,6 +76,9 @@ export default {
       closeDetail: false,
       showOriginalSize: false,
     };
+  },
+  mounted() {
+    this.closeDetail = this.minWidthLess768;
   },
   methods: {
     showPrevImage() {
@@ -82,7 +88,6 @@ export default {
       this.$emit("showNextImage");
     },
     zoomImage(event) {
-      // document.body.style.overflowY = "hidden";
       this.showOriginalSize = !this.showOriginalSize;
       setTimeout(() => {
         this.$refs.imgViewer.scrollTo(0, event.clientY);
@@ -91,7 +96,12 @@ export default {
       this.closeDetail = this.showOriginalSize;
     },
     toggleDetail(detailState) {
-      this.closeDetail = detailState;
+      // 最大宽度 <= 768 时始终不显示详情栏（除非用户点击）
+      if (this.minWidthLess768) {
+        this.closeDetail = true;
+      } else {
+        this.closeDetail = detailState;
+      }
     },
     closeViewer() {
       this.$store.commit("imageViewer/closeImageViewer");

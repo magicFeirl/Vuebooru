@@ -1,13 +1,24 @@
 <template>
-  <div
-    class="open-detail"
-    @click.stop="closeDetail = false"
-    v-show="closeDetail"
-    title="open detail"
-  >
-    <i class="iconfont icon-toggle-right"></i>
+  <div class="side-option" v-if="closeDetail || minWidthLess768">
+    <div
+      class="open-detail"
+      @click.stop="closeDetail = false"
+      v-show="closeDetail || minWidthLess768"
+      title="open detail"
+    >
+      <i class="iconfont icon-toggle-right"></i>
+    </div>
+    <div
+      @click="addPostToFavorite(favorited, image.id)"
+      :class="['favorite-post', { favorited }]"
+      title="favorite current post"
+    >
+      <i
+        :class="['iconfont', favorited ? 'icon-heart-fill' : 'icon-heart']"
+      ></i>
+    </div>
   </div>
-  <div class="detail" :class="{ close: closeDetail }">
+  <div class="detail" :class="{ close: closeDetail, open: !closeDetail }">
     <div class="statistics">
       <h2 class="title">
         Statistics
@@ -27,7 +38,7 @@
       <span
         >Source: <a :href="image.source"> {{ image.source }}</a></span
       >
-      <span>Score: {{ image.score }}</span>
+      <span>Score: {{ score }}</span>
       <span>Rating: {{ image.rating }}</span>
     </div>
     <div class="options">
@@ -56,7 +67,6 @@
         </template>
       </template>
     </div>
-    <!-- <div class="toggle"></div> -->
   </div>
 </template>
 
@@ -87,6 +97,9 @@ export default {
     tags() {
       return this.image.tags;
     },
+    score() {
+      return this.image.score;
+    },
     favorited: {
       get() {
         return this.image.favorited;
@@ -95,6 +108,11 @@ export default {
         return (this.image.favorited = value);
       },
     },
+  },
+  data() {
+    return {
+      minWidthLess768: false,
+    };
   },
   methods: {
     jumpToTag(search) {
@@ -109,8 +127,16 @@ export default {
     async addPostToFavorite(favorited, image_id) {
       if (await this.addPostToFavoriteMutation({ favorited, image_id })) {
         this.favorited = !this.favorited;
+        if (this.favorited) {
+          this.image.score++;
+        } else {
+          this.image.score--;
+        }
       }
     },
+  },
+  mounted() {
+    this.minWidthLess768 = window.innerWidth <= 768;
   },
 };
 </script>
@@ -143,25 +169,41 @@ h4.title {
   padding: 0;
 }
 
-.open-detail {
+.side-option {
   position: absolute;
   left: 0;
   top: 0;
-  padding: 0.5rem 0.3rem;
-  border-radius: 0 5px 5px 0;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-flow: column wrap;
   color: #ccc;
-  cursor: pointer;
   z-index: 1010;
+  row-gap: 5px;
+  cursor: pointer;
 }
-.open-detail .iconfont {
+
+.side-option > div {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem 0.3rem;
+  border-radius: 0 5px 5px 0;
+}
+
+.side-option > div:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.side-option .favorite-post {
+  padding: 0.5rem;
+  padding-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.favorite-post.favorited {
+  color: rgb(189, 15, 15);
+}
+
+.side-option .iconfont {
   cursor: pointer;
   font-size: 1.2rem;
-}
-.open-detail:hover {
-  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .statistics .title {
@@ -216,12 +258,17 @@ a:hover,
 
 @media screen and (max-width: 768px) {
   .detail {
-    display: none;
+    width: 0;
     flex: 0;
+    position: absolute;
+    height: 100%;
+    left: 0;
+    top: 0;
+    transition: width 0.2s ease;
   }
 
-  .open-detail {
-    display: none;
+  .detail.open {
+    width: 60%;
   }
 }
 </style>

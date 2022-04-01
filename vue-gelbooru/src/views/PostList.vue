@@ -55,7 +55,7 @@ const showImageViewer = (index) => {
 const newPostLoaded = computed(() => posts.value?.length > 0);
 
 // 加载新页面 watcher
-const loading = useLoadNewPageWatcher(pid, search, posts);
+const [loading, has_more] = useLoadNewPageWatcher(pid, search, posts);
 
 // 路由参数自动更新 watcher
 useRouteQueryAutoUpdateWatcher(pid, search);
@@ -91,11 +91,13 @@ watch(imageListRef, () => {
   useInfiniteScroll(
     imageListRef.value.$el,
     () => {
-      if (!loading.value) {
+      if (!loading.value && has_more.value) {
         pid.value++;
+      } else if (!has_more.value) {
+        message("No more data", "", 3000);
       }
     },
-    300,
+    400,
     25
   );
 });

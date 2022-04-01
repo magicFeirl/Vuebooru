@@ -1,17 +1,18 @@
 <template>
   <login-dialog v-model:show="showLoginDialog"></login-dialog>
   <div class="search-container">
-    <div class="space"></div>
-    <div>
+    <router-link :to="{ path: '/' }">
+      <span class="logo">Vuebooru</span>
+    </router-link>
+    <div class="search-area">
       <input
         v-model.lazy.trim="_search"
         type="text"
         placeholder="Ex: blue_sky 1girl"
         class="search"
       />
-      <button>Search</button>
+      <button title="This button doesn't actually work lol">Search</button>
     </div>
-    <div class="space"></div>
     <div class="account">
       <span v-if="!login" class="login" @click="showLoginDialog = true"
         >Login</span
@@ -68,10 +69,6 @@ export default {
 </script>
 
 <style scoped>
-.space {
-  flex: 1;
-}
-
 .search-container {
   width: 100%;
   display: flex;
@@ -83,6 +80,10 @@ export default {
   top: 0;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.15);
   z-index: 1000;
+}
+
+.search-area {
+  margin: 0 2rem;
 }
 
 input.search {
@@ -112,14 +113,45 @@ input.search {
   background: rgb(251, 179, 7);
 }
 
-.account {
+.account,
+.logo {
   margin-right: 2rem;
   color: #0773fb;
   font-weight: 600;
   cursor: pointer;
 }
 
-.account span:hover {
+.logo {
+  margin-right: 0;
+  text-decoration: none;
+}
+
+.account span:hover,
+.logo span:hover {
   color: rgb(251, 179, 7);
+}
+
+@media screen and (max-width: 912px) {
+  .search-area button {
+    display: none;
+  }
+
+  .search-area {
+    margin: 0 1rem;
+  }
+
+  input.search {
+    width: 35vw;
+  }
+
+  .account,
+  .logo {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .account span:last-child {
+    margin-left: 0.5rem !important;
+  }
 }
 </style>

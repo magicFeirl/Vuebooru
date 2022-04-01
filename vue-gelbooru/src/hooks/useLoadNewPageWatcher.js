@@ -22,8 +22,12 @@ export default function (pid, search, posts) {
         has_more.value = true;
       }
 
-      if (pid.value === 0 && search.value) {
-        document.title = decodeURIComponent(search.value) + ' - Vuebooru';
+      if (pid.value === 0) {
+        if (search.value) {
+          document.title = decodeURIComponent(search.value) + ' - Vuebooru';
+        } else {
+          document.title = 'Vuebooru'
+        }
       }
 
       if (!has_more.value) {
@@ -37,6 +41,7 @@ export default function (pid, search, posts) {
         } else {
           // posts.value = data['data'];
           const res_posts = data['data'];
+
           if (res_posts.length === 0) {
             has_more.value = false;
             return;
@@ -51,5 +56,5 @@ export default function (pid, search, posts) {
     }
   );
 
-  return loading
+  return [loading, has_more]
 }

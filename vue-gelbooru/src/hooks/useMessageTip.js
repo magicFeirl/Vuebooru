@@ -5,9 +5,14 @@ import MessageTip from '../components/MessageTip.vue'
 
 const div = document.createElement('div');
 document.body.appendChild(div);
+let app = null;
 
 export function message(message, type, duration = 3000) {
-  const app = createApp(MessageTip, {
+  if (app) {
+    return;
+  }
+
+  app = createApp(MessageTip, {
     message,
     duration
   });
@@ -16,6 +21,7 @@ export function message(message, type, duration = 3000) {
 
   setTimeout(() => {
     app.unmount();
+    app = null;
   }, duration + 200)
 }
 
