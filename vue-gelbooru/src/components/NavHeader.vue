@@ -121,14 +121,15 @@ input.search {
   cursor: pointer;
 }
 
+a,
 .logo {
   margin-right: 0;
   text-decoration: none;
 }
 
 .account span:hover,
-.logo span:hover {
-  color: rgb(251, 179, 7);
+.logo:hover {
+  color: rgb(251, 179, 7) !important;
 }
 
 @media screen and (max-width: 912px) {

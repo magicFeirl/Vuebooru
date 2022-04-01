@@ -104,6 +104,11 @@ watch(imageListRef, () => {
 
 const handleShowImage = (step) => {
   const index = store.state.imageViewer.index + step;
+
+  if (index < 0 || index >= posts.value.length) {
+    return;
+  }
+
   store.dispatch("imageViewer/setImage", {
     index,
     image: posts.value[index],

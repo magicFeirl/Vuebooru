@@ -46,7 +46,9 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
+
+import tinykeys from "tinykeys";
 
 import ImageViewerDetail from "./ImageViewerDetail.vue";
 
@@ -79,8 +81,41 @@ export default {
   },
   mounted() {
     this.closeDetail = this.minWidthLess768;
+
+    tinykeys(window, {
+      s: async () => {
+        if (this.showImageViewer) {
+          if (this.image.favorited === true || this.image.favorited === false) {
+            if (
+              await this.addPostToFavorite({
+                favorited: this.image.favorited,
+                image_id: this.image.id,
+              })
+            ) {
+              this.image.favorited = !this.image.favorited;
+            }
+          }
+        }
+      },
+      a: () => {
+        if (this.showImageViewer) {
+          this.showPrevImage();
+        }
+      },
+      d: () => {
+        if (this.showImageViewer) {
+          this.showNextImage();
+        }
+      },
+      w: () => {
+        if (this.showImageViewer) {
+          this.closeViewer();
+        }
+      },
+    });
   },
   methods: {
+    ...mapActions("imageViewer", ["addPostToFavorite"]),
     showPrevImage() {
       this.$emit("showPrevImage");
     },

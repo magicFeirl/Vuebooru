@@ -1,6 +1,11 @@
 <template>
   <div class="thumb" :class="{ video: isVideo(post.file_url) }">
-    <img :data-src="post.preview_url" :alt="`post. ${post.id}`" v-lazy />
+    <img
+      src="/src/assets/image/loading.gif"
+      :data-src="post.preview_url"
+      :alt="`post. ${post.id}`"
+      v-lazy
+    />
   </div>
 </template>
 

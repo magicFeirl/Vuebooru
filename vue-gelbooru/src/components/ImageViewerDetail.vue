@@ -50,6 +50,13 @@
         }}</a>
       </span>
     </div>
+    <div class="keymap">
+      <h2 class="title">Key map</h2>
+      <span>A: Prev Image</span>
+      <span>S: (Un)Favorite Image</span>
+      <span>D: Next Image</span>
+      <span>W: Close Image</span>
+    </div>
     <div class="tags">
       <h2 class="title">Tags</h2>
       <template v-for="(tag_names, tag_type) in tags">
@@ -220,6 +227,7 @@ h4.title {
   color: #337ab7;
 }
 
+.detail .keymap,
 .detail .statistics,
 .detail .options {
   display: flex;
