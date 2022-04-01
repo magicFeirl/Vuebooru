@@ -1,8 +1,17 @@
 import axios from 'axios'
+import {
+  message
+} from '../hooks/useMessageTip';
 
 const http = axios.create({
   baseURL: 'http://127.0.0.1:8889',
   withCredentials: true
+})
+
+http.interceptors.request.use((config) => {
+  return config;
+}, (error) => {
+  message('Server Error: ' + error.code, '', 5000);
 })
 
 export async function get_posts(pid, tags = '', limit = 42) {

@@ -1,6 +1,12 @@
 import {
-  get_posts_tags
+  get_posts_tags,
+  favorite,
+  unfavorite
 } from '../../api'
+
+import {
+  message as msgBox
+} from '../../hooks/useMessageTip'
 
 export default {
   namespaced: true,
@@ -10,7 +16,14 @@ export default {
     index: 0
   },
   mutations: {
-    async setImage(state, payload) {
+    closeImageViewer(state) {
+      state.showImageViewer = false;
+    },
+  },
+  actions: {
+    async setImage({
+      state
+    }, payload) {
       const {
         index,
         image
@@ -29,8 +42,23 @@ export default {
       state.index = index;
       state.showImageViewer = true;
     },
-    closeImageViewer(state) {
-      state.showImageViewer = false;
-    }
+    async addPostToFavorite(context, {
+      favorited,
+      image_id
+    }) {
+      const func_map = {
+        true: unfavorite,
+        false: favorite,
+      };
+
+      const {
+        message,
+        code
+      } = await func_map[favorited](image_id);
+
+      msgBox(message, '', 1500);
+
+      return code === 200;
+    },
   },
 }

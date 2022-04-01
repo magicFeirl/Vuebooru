@@ -49,6 +49,7 @@ export default {
     }),
     async login() {
       if (!this.username.length || !this.password.length) {
+        this.$message("Invalid username or password", "", 1500);
         return;
       }
 
@@ -56,9 +57,9 @@ export default {
 
       if (data.code === 200) {
         this.user_login(data.user_id);
-      } else {
-        console.log("failed");
       }
+
+      this.$message(data.message, "", 3000);
 
       this.closeDialog();
     },

@@ -6,6 +6,10 @@ import {
   imageViewer
 } from './modules';
 
+import {
+  message
+} from '../hooks/useMessageTip';
+
 const store = createStore({
   state: {
     search: '',
@@ -34,6 +38,7 @@ const store = createStore({
 
       deleteCookie('user_id');
       deleteCookie('pass_hash');
+      message('You have logout', '', 3000);
     }
   },
   modules: {

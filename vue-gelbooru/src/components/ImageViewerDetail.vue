@@ -33,7 +33,7 @@
     <div class="options">
       <h2 class="title">Options</h2>
       <span><a target="_blank" :href="image.file_url">Original Image</a></span>
-      <span @click="addPostToFavorite">
+      <span @click="addPostToFavorite(favorited, image.id)">
         <a href="javascript:(0);">{{
           favorited ? "Unfavorite" : "Add to favorite"
         }}</a>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { favorite, unfavorite } from "../api";
+import { mapActions } from "vuex";
 
 export default {
   emits: ["close", "toggle"],
@@ -103,15 +103,11 @@ export default {
       this.$store.commit("search", search);
       this.$store.commit("imageViewer/closeImageViewer");
     },
-    async addPostToFavorite() {
-      const func_map = {
-        true: unfavorite,
-        false: favorite,
-      };
-
-      const { message, code } = await func_map[this.favorited](this.image.id);
-
-      if (code === 200) {
+    ...mapActions("imageViewer", {
+      addPostToFavoriteMutation: "addPostToFavorite",
+    }),
+    async addPostToFavorite(favorited, image_id) {
+      if (await this.addPostToFavoriteMutation({ favorited, image_id })) {
         this.favorited = !this.favorited;
       }
     },

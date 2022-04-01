@@ -3,14 +3,24 @@ import {
 } from 'vue'
 import MessageTip from '../components/MessageTip.vue'
 
-export default function (message, type, duration = 3000) {
+const div = document.createElement('div');
+document.body.appendChild(div);
+
+export function message(message, type, duration = 3000) {
   const app = createApp(MessageTip, {
-    message
+    message,
+    duration
   });
-  const div = document.createElement('div');
-  document.body.appendChild(div);
 
   app.mount(div);
 
+  setTimeout(() => {
+    app.unmount();
+  }, duration + 200)
+}
 
+export default {
+  install(app) {
+    app.config.globalProperties.$message = message;
+  },
 }

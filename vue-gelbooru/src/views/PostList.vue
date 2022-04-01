@@ -11,13 +11,9 @@
       :post="post"
       @click="showImageViewer(idx)"
     ></image-list-item>
-    <div class="loading next-page-loading" v-if="loading">
-      <h3>Loading page {{ pid + 1 }}</h3>
-    </div>
   </image-list>
   <div class="loading" v-else>
-    <h3 v-if="loading">loading page {{ pid + 1 }}...</h3>
-    <h3 v-else>
+    <h3 v-if="!loading">
       Nobody here but us chickens!
       <br />
       <i
@@ -30,7 +26,6 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { RecycleScroller } from "vue-virtual-scroller";
 
 import ImageList from "../components/ImageList.vue";
 import ImageListItem from "../components/ImageListItem.vue";
@@ -42,6 +37,7 @@ import useInfiniteScroll from "../hooks/useInfiniteScroll";
 import useRouteQueryAutoUpdateWatcher from "../hooks/useRouteQueryAutoUpdateWatcher";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { message } from "../hooks/useMessageTip";
 
 const route = useRoute();
 const { query } = route;
@@ -53,7 +49,7 @@ const search = ref(query.search || store.state.search);
 const posts = ref([]);
 
 const showImageViewer = (index) => {
-  store.commit("imageViewer/setImage", { index, image: posts.value[index] });
+  store.dispatch("imageViewer/setImage", { index, image: posts.value[index] });
 };
 
 const newPostLoaded = computed(() => posts.value?.length > 0);
@@ -71,6 +67,10 @@ watch(
     search.value = newValue;
   }
 );
+
+watch(pid, () => {
+  message("Loading Page " + (parseInt(pid.value) + 1), "", 1000);
+});
 
 // 监听路由变化，发送请求
 watch(
@@ -102,7 +102,7 @@ watch(imageListRef, () => {
 
 const handleShowImage = (step) => {
   const index = store.state.imageViewer.index + step;
-  store.commit("imageViewer/setImage", {
+  store.dispatch("imageViewer/setImage", {
     index,
     image: posts.value[index],
   });
