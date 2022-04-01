@@ -9,6 +9,20 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 ## Todo
 
-- [ ]  登录
+- [x]  登录
 
-- [ ] 收藏
+- [x] 收藏
+
+## 可以优化的点
+
+**图片懒加载 margin-bottom**
+
+需要设置 `IntersectionObserver` 的 root，但是切换搜索的时候 root 会丢失，暂时没有很优雅的解决方法
+
+**无限滚动列表优化**
+
+减少了后端返回数据的字段后性能得到了部分提升，但是限制 DOM 数量的根本问题还是没解决。
+
+**图片加载placeholder**
+
+上网找找素材

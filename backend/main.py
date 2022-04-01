@@ -170,10 +170,16 @@ class PostModel(BaseModel):
     file_url: str
     sample_url: str
     preview_url: str
+    width: int
+    height: int
+    rating: str
+
+
 class PostsResponse(BaseModel):
     code: int
     message: str
     data: List[PostModel]
+
 
 @app.get("/", response_model=PostsResponse)
 async def load_posts(pid: int, tags: str = None, limit: int = 42):
@@ -188,5 +194,5 @@ async def load_posts(pid: int, tags: str = None, limit: int = 42):
     return {
         'code': 200,
         'message': 'get post list success',
-        'data': result['post']
+        'data': result['post'] if 'post' in result else []
     }
