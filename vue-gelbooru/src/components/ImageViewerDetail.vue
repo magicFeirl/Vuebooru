@@ -17,6 +17,12 @@
         :class="['iconfont', favorited ? 'icon-heart-fill' : 'icon-heart']"
       ></i>
     </div>
+    <div @click="closeViewer" class="close-viewer">
+      <i class="iconfont icon-close"></i>
+    </div>
+    <div class="download-image">
+      <i class="iconfont icon-down"></i>
+    </div>
   </div>
   <div class="detail" :class="{ close: closeDetail, open: !closeDetail }">
     <div class="statistics">
@@ -48,6 +54,9 @@
         <a href="javascript:(0);">{{
           favorited ? "Unfavorite" : "Add to favorite"
         }}</a>
+      </span>
+      <span @click="closeViewer">
+        <a href="javascript:(0);">Close Viewer</a>
       </span>
     </div>
     <div class="keymap">
@@ -81,7 +90,7 @@
 import { mapActions } from "vuex";
 
 export default {
-  emits: ["close", "toggle"],
+  emits: ["close", "toggle", "closeViewer"],
   props: {
     image: {
       type: Object,
@@ -122,6 +131,9 @@ export default {
     };
   },
   methods: {
+    closeViewer() {
+      this.$emit("closeViewer");
+    },
     jumpToTag(search) {
       search = decodeURIComponent(search);
       this.$router.push({ path: "/", query: { search, pid: 0 } });
@@ -153,7 +165,7 @@ export default {
   position: relative;
   display: flex;
   flex: 2 0 0;
-  flex-flow: column;
+  flex-direction: column;
   background-color: rgba(34, 34, 34, 0.95);
   padding: 0.5rem 0.8rem;
   overflow-y: auto;
@@ -181,7 +193,8 @@ h4.title {
   left: 0;
   top: 0;
   display: flex;
-  flex-flow: column wrap;
+  flex-direction: column;
+  flex-wrap: wrap;
   color: #ccc;
   z-index: 1010;
   row-gap: 5px;
@@ -192,10 +205,16 @@ h4.title {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 0.5rem 0.3rem;
   border-radius: 0 5px 5px 0;
+  text-align: center;
 }
 
 .side-option > div:hover {
   background-color: rgba(0, 0, 0, 0.8);
+}
+
+.side-option .iconfont {
+  cursor: pointer;
+  font-size: 1.2rem;
 }
 
 .side-option .favorite-post {
@@ -206,11 +225,6 @@ h4.title {
 
 .favorite-post.favorited {
   color: rgb(189, 15, 15);
-}
-
-.side-option .iconfont {
-  cursor: pointer;
-  font-size: 1.2rem;
 }
 
 .statistics .title {
@@ -232,7 +246,8 @@ h4.title {
 .detail .options {
   display: flex;
   width: 100%;
-  flex-flow: column wrap;
+  flex-direction: column;
+  flex-wrap: wrap;
   word-break: break-all;
   row-gap: 5px;
 }
@@ -249,7 +264,8 @@ a {
 .tags {
   display: flex;
   width: 100%;
-  flex-flow: column wrap;
+  flex-direction: column;
+  flex-wrap: wrap;
   word-break: break-all;
 }
 
@@ -273,6 +289,20 @@ a:hover,
     left: 0;
     top: 0;
     transition: width 0.2s ease;
+  }
+
+  .side-option {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 5px;
+  }
+
+  .side-option > div:not(:first-child) {
+    border-radius: 5px !important;
+  }
+
+  .side-option .favorite-post {
+    padding: 0.5rem 0.3rem !important;
   }
 
   .detail.open {

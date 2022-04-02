@@ -5,6 +5,7 @@
         <image-viewer-detail
           @close="closeViewer"
           @toggle="toggleDetail"
+          @closeViewer="closeViewer"
           :image="image"
           :closeDetail="closeDetail"
         ></image-viewer-detail>

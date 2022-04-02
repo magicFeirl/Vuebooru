@@ -25,4 +25,4 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 **图片加载placeholder**
 
-上网找找素材
+~~上网找找素材~~

@@ -14,6 +14,7 @@
         id="username"
         type="text"
         placeholder="username"
+        @keyup.enter="login"
       />
       <input
         autocomplete
@@ -21,6 +22,7 @@
         id="password"
         type="password"
         placeholder="password"
+        @keyup.enter="login"
       />
       <button @click="login">Login</button>
     </div>
