@@ -42,7 +42,7 @@
       </span>
       <span>Size: {{ image.width }} x {{ image.height }}</span>
       <span
-        >Source: <a :href="image.source"> {{ image.source }}</a></span
+        >Source: <a :href="source"> {{ source }}</a></span
       >
       <span>Score: {{ score }}</span>
       <span>Rating: {{ image.rating }}</span>
@@ -104,6 +104,9 @@ export default {
     },
   },
   computed: {
+    source() {
+      return decodeURIComponent(this.image.source);
+    },
     gelbooruPostURL() {
       return `https://gelbooru.com/index.php?page=post&s=view&id=${this.image.id}`;
     },
