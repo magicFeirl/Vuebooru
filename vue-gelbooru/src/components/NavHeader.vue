@@ -4,6 +4,9 @@
     <router-link :to="{ path: '/' }">
       <span class="logo">Vuebooru</span>
     </router-link>
+    <span title="save current search" class="save-search" @click="saveSearch">
+      <i class="iconfont icon-heart-fill"></i>
+    </span>
     <div class="search-area">
       <input
         v-model.lazy.trim="_search"
@@ -28,6 +31,7 @@
 <script>
 import LoginDialog from "./LoginDialog.vue";
 import { mapMutations, mapState } from "vuex";
+import { save_search } from "../api";
 
 export default {
   emits: ["update:search"],
@@ -47,6 +51,10 @@ export default {
     }),
     showMyFavorites() {
       this.searchFav("fav:" + this.user_id);
+    },
+    async saveSearch() {
+      const { code, message } = await save_search(this.search);
+      this.$message(message, "", 3000);
     },
   },
   computed: {
@@ -83,7 +91,21 @@ export default {
 }
 
 .search-area {
-  margin: 0 2rem;
+  margin: 0 2rem 0 0.5rem;
+}
+
+.save-search {
+  color: rgb(101, 101, 101);
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.save-search:hover {
+  color: rgb(218, 15, 15);
+}
+
+.save-search i {
+  font-size: 1.35rem;
 }
 
 input.search {

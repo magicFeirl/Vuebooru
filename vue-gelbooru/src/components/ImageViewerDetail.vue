@@ -74,7 +74,7 @@
           <router-link
             class="tag"
             @click="jumpToTag(tag)"
-            :to="{ path: '/', query: { search: tag } }"
+            :to="{ path: '/', query: { search: decodeURIComponent(tag) } }"
             v-for="tag in tag_names"
             :key="tag"
           >

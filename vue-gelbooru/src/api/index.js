@@ -74,3 +74,11 @@ export async function unfavorite(pid) {
 
   return data
 }
+
+export async function save_search(search) {
+  const {
+    data
+  } = await http.post('/save_search?search=' + search)
+
+  return data
+}
