@@ -1,7 +1,8 @@
 import os
+import re
 from typing import List, Optional
 
-from pydantic import BaseModel
+
 from aiohttp import ClientSession, TCPConnector, DummyCookieJar
 from fastapi import Cookie, Depends, FastAPI, Request, Response, Body
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +10,8 @@ from fastapi.responses import JSONResponse
 from lxml.html import fromstring
 
 from api import *
+from response_model import *
+
 
 app = FastAPI()
 
@@ -44,12 +47,12 @@ async def user_not_login_exception_handler(request: Request, exec: UserNotLoginE
     )
 
 
-def user_cookie_depend(no_login_error=True):
+def user_cookie_depend(login_error=True):
     async def depend(
         pass_hash: Optional[str] = Cookie(None), user_id: Optional[str] = Cookie(None)
     ):
         if not pass_hash or not user_id:
-            if no_login_error:
+            if login_error:
                 raise UserNotLoginError()
             else:
                 return {"cookie": ""}
@@ -91,7 +94,7 @@ async def login(response: Response, username: str = Body(None), password: str = 
 
 @app.get("/post")
 async def post(
-    id: str, cookie_header=Depends(user_cookie_depend(no_login_error=False))
+    id: str, cookie_header=Depends(user_cookie_depend(login_error=False))
 ):
     def parse_tags_and_favorite_info(html):
         element = fromstring(html)
@@ -127,7 +130,7 @@ async def post(
     }
 
 
-@app.get("/unfavorite")
+@app.get("/unfavorite", response_model=CommonResponse)
 async def unfavorite(id: str, cookie_header=Depends(user_cookie_depend())):
     async with session.get(
         UNFAVORITE_API, params={'id': id},
@@ -135,10 +138,10 @@ async def unfavorite(id: str, cookie_header=Depends(user_cookie_depend())):
     ) as resp:
         pass
 
-    return {"code": 200, "message": "Unfavorite successed"}
+    return CommonResponse(code=200, message='Unfavorite successed')
 
 
-@app.get("/favorite")
+@app.get("/favorite", response_model=CommonResponse)
 async def favorite(id: str, cookie_header=Depends(user_cookie_depend())):
 
     async with session.get(
@@ -152,33 +155,42 @@ async def favorite(id: str, cookie_header=Depends(user_cookie_depend())):
         "3": "Add favorite successed",
     }
 
-    return {
-        "code": 200,
-        "message": fav_state_map.get(fav_state, f"Unexpected code: {fav_state}"),
-    }
+    message = fav_state_map.get(fav_state, f"Unexpected code: {fav_state}")
+
+    return CommonResponse(code=200, message=message)
 
 
-class PostModel(BaseModel):
-    id: str
-    created_at: str
-    score: int
-    source: str
-    owner: str
-    creator_id: str
-    tags: str
-    title: str
-    file_url: str
-    sample_url: str
-    preview_url: str
-    width: int
-    height: int
-    rating: str
+@app.post('/save_search', response_model=CommonResponse)
+async def save_search(search: str, cookie_header=Depends(user_cookie_depend(login_error=False))):
+    async with session.get('https://gelbooru.com/index.php?page=post&s=list&tags={search}', headers=cookie_header) as resp:
+        html = await resp.text()
+        PHPSESSID = resp.cookies['PHPSESSID'].value
 
+    element = fromstring(html)
+    script_text, csrf_token = None, None
 
-class PostsResponse(BaseModel):
-    code: int
-    message: str
-    data: List[PostModel]
+    script_text: str = element.xpath('/html/body/script[7]/text()')
+    if script_text:
+        csrf_token = re.search('csrf-token=(\w+)', script_text[0])
+
+        if csrf_token:
+            csrf_token = csrf_token[1]
+
+    if not script_text or not csrf_token:
+        return CommonResponse(code=500, message='Can\'t found csrf-token')
+
+    PHPSESSID = f'PHPSESSID={PHPSESSID};'
+    cookie_header['cookie'] = cookie_header['cookie'] + PHPSESSID
+
+    async with session.post(SAVE_SEARCH_API, headers=cookie_header, params={'csrf-token': csrf_token}, data={'save_tag_search': search}) as resp:
+        result = await resp.text()
+
+    message = 'There was an error saving this search. Perhaps it already existed or you are not logged in?'
+
+    if result == '1':
+        message = 'Saved this search successfully!'
+
+    return CommonResponse(code=200, message=message)
 
 
 @app.get("/", response_model=PostsResponse)

@@ -36,6 +36,8 @@
 
 vite2 + vue3 + vuex + vue-router，vue 全家桶。
 
+[tinykeys 键盘监听](https://github.com/jamiebuilds/tinykeys)
+
 ### 项目总结
 
 一时兴起想写个网站提升 Gelbooru 的体验，项目前后端都是由我一人完成，现总结下写项目时遇到的问题以及一些收获。
