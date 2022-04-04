@@ -10,11 +10,11 @@
 
 **首页**
 
-![](./images/1.jpg)
+![](./images/1.JPG)
 
 **查看图片**
 
-![](./images/2.jpg)
+![](./images/2.JPG)
 
 ### 部署
 
