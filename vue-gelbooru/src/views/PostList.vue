@@ -33,7 +33,7 @@ import ImageViewer from "../components/ImageViewer.vue";
 import NavHeader from "../components/NavHeader.vue";
 
 import useLoadNewPageWatcher from "../hooks/useLoadNewPageWatcher";
-import useInfiniteScroll from "../hooks/useInfiniteScroll";
+import { useInfiniteScroll } from "@vueuse/core";
 import useRouteQueryAutoUpdateWatcher from "../hooks/useRouteQueryAutoUpdateWatcher";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -84,23 +84,20 @@ watch(
 
 // 注册无限滚动
 const imageListRef = ref(null);
-watch(imageListRef, () => {
-  if (!imageListRef.value) {
-    return;
+
+useInfiniteScroll(
+  imageListRef,
+  () => {
+    if (!loading.value && has_more.value) {
+      pid.value++;
+    } else if (!has_more.value) {
+      message("No more data", "", 3000);
+    }
+  },
+  {
+    distance: 250,
   }
-  useInfiniteScroll(
-    imageListRef.value.$el,
-    () => {
-      if (!loading.value && has_more.value) {
-        pid.value++;
-      } else if (!has_more.value) {
-        message("No more data", "", 3000);
-      }
-    },
-    400,
-    25
-  );
-});
+);
 
 const handleShowImage = (step) => {
   const index = store.state.imageViewer.index + step;

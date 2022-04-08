@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^8.2.5",
     "axios": "^0.26.1",
     "mitt": "^3.0.0",
     "tinykeys": "^1.4.0",

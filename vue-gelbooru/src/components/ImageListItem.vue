@@ -2,9 +2,8 @@
   <div class="thumb" :class="{ video: isVideo(post.file_url) }">
     <img
       src="/src/assets/image/loading.gif"
-      :data-src="post.preview_url"
       :alt="`post. ${post.id}`"
-      v-lazy
+      v-lazy="img"
     />
   </div>
 </template>
@@ -19,6 +18,14 @@ export default {
   methods: {
     isVideo(url) {
       return url !== "" && (url.endsWith("webm") || url.endsWith("mp4"));
+    },
+  },
+  computed: {
+    img() {
+      return {
+        src: this.post.preview_url,
+        top: 250,
+      };
     },
   },
 };
