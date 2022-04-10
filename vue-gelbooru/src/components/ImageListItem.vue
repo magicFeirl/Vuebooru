@@ -24,7 +24,7 @@ export default {
     img() {
       return {
         src: this.post.preview_url,
-        top: 250,
+        top: 300,
       };
     },
   },

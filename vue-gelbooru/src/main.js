@@ -11,7 +11,7 @@ import './assets/css/global.css'
 
 import vLazy from './directives/vLazy'
 import messageBox from './hooks/useMessageTip'
-
+import 'nprogress/nprogress.css'
 
 const app = createApp(App)
 

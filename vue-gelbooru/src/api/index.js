@@ -1,5 +1,8 @@
 import axios from 'axios'
 import {
+  useNProgress
+} from '@vueuse/integrations/useNProgress'
+import {
   message
 } from '../hooks/useMessageTip';
 
@@ -8,11 +11,25 @@ const http = axios.create({
   withCredentials: true
 })
 
-http.interceptors.request.use((config) => {
-  return config;
-}, (error) => {
-  message('Server Error: ' + error.code, '', 5000);
+const {
+  isLoading
+} = useNProgress(null, {
+  showSpinner: false
 })
+
+http.interceptors.request.use((config) => {
+  isLoading.value = true;
+  return config;
+}, (config) => {
+  isLoading.value = false;
+  message('Server Error: ' + config.code, '', 5000);
+  return config;
+})
+
+http.interceptors.response.use((config) => {
+  isLoading.value = false;
+  return config
+});
 
 export async function get_posts(pid, tags = '', limit = 42) {
   const {
