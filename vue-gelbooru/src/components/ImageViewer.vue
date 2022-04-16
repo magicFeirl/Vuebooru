@@ -23,23 +23,38 @@
               <i class="iconfont icon-Rightarrow"></i>
             </div>
           </div>
-          <video
-            v-if="isAnimated(src)"
-            @click.stop
-            class="fit-video"
-            :src="src"
-            controls
-            loop
-            muted
-            autoplay
-          ></video>
-          <img
-            v-else
-            :class="{ 'original-size': showOriginalSize }"
-            @click.stop="zoomImage($event)"
-            :src="src"
-            alt=""
-          />
+          <div
+            style="
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <transition name="fade">
+              <div class="loading-cover" v-show="loading"><span>loading...</span></div>
+            </transition>
+
+            <video
+              @load="loading = false"
+              v-if="isAnimated(src)"
+              @click.stop
+              class="fit-video"
+              :src="src"
+              controls
+              loop
+              muted
+              autoplay
+            ></video>
+            <img
+              @load="loading = false"
+              v-else
+              :class="{ 'original-size': showOriginalSize }"
+              @click.stop="zoomImage($event)"
+              :src="src"
+              alt=""
+            />
+          </div>
         </div>
       </div>
     </transition>
@@ -60,10 +75,7 @@ export default {
   },
   computed: {
     src() {
-      if (
-        this.isAnimated(this.image.file_url) ||
-        this.image.file_url.endsWith("gif")
-      ) {
+      if (this.isAnimated(this.image.file_url) || this.image.file_url.endsWith("gif")) {
         return this.image.file_url;
       } else {
         return this.image.sample_url || this.image.file_url;
@@ -78,6 +90,7 @@ export default {
     return {
       closeDetail: false,
       showOriginalSize: false,
+      loading: true,
     };
   },
   mounted() {
@@ -113,15 +126,24 @@ export default {
           this.closeViewer();
         }
       },
+      e: () => {
+        if (this.showImageViewer && this.image?.tags.artist.length) {
+          const artist = this.image?.tags.artist[0];
+
+          window.open(`/?search=${decodeURIComponent(artist)}&pid=0`, "_blank");
+        }
+      },
     });
   },
   methods: {
     ...mapActions("imageViewer", ["addPostToFavorite"]),
     showPrevImage() {
       this.$emit("showPrevImage");
+      this.loading = true;
     },
     showNextImage() {
       this.$emit("showNextImage");
+      this.loading = true;
     },
     zoomImage(event) {
       this.showOriginalSize = !this.showOriginalSize;
@@ -143,6 +165,7 @@ export default {
       this.$store.commit("imageViewer/closeImageViewer");
       // document.body.style.overflowY = "auto";
       this.showOriginalSize = false;
+      this.loading = false;
     },
     isAnimated(url) {
       return url !== "" && (url.endsWith("webm") || url.endsWith("mp4"));
@@ -179,7 +202,7 @@ export default {
 }
 
 .arrow-wrapper {
-  z-index: 1001;
+  z-index: 1006;
 }
 
 .arrow {
@@ -199,6 +222,42 @@ export default {
 .arrow:hover {
   transform: translateY(-100%) scale(1.15);
 }
+
+.loading-cover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1005;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  font-weight: 200;
+  font-size: 2rem;
+  animation: infinite 2s color-transition;
+}
+
+.loading-cover span {
+  margin-top: -2rem;
+}
+
+@keyframes color-transition {
+  0% {
+    color: #aaa;
+  }
+
+  50% {
+    color: #ddd;
+  }
+
+  100% {
+    color: #aaa;
+  }
+}
+
 .arrow i.iconfont {
   font-size: 20px;
   margin-top: 1px;
@@ -219,10 +278,12 @@ export default {
   object-fit: contain;
   cursor: zoom-in;
 }
+
 .fit-video {
   max-width: 100%;
   max-height: 90%;
 }
+
 img.original-size {
   /* max-width: unset !important; */
   max-height: unset !important;

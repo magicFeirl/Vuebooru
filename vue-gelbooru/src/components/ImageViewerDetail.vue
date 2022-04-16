@@ -13,9 +13,7 @@
       :class="['favorite-post', { favorited }]"
       title="favorite current post"
     >
-      <i
-        :class="['iconfont', favorited ? 'icon-heart-fill' : 'icon-heart']"
-      ></i>
+      <i :class="['iconfont', favorited ? 'icon-heart-fill' : 'icon-heart']"></i>
     </div>
     <div @click="closeViewer" class="close-viewer">
       <i class="iconfont icon-close"></i>
@@ -51,9 +49,7 @@
       <h2 class="title">Options</h2>
       <span><a target="_blank" :href="image.file_url">Original Image</a></span>
       <span @click="addPostToFavorite(favorited, image.id)">
-        <a href="javascript:(0);">{{
-          favorited ? "Unfavorite" : "Add to favorite"
-        }}</a>
+        <a href="javascript:(0);">{{ favorited ? "Unfavorite" : "Add to favorite" }}</a>
       </span>
       <span @click="closeViewer">
         <a href="javascript:(0);">Close Viewer</a>
@@ -65,6 +61,7 @@
       <span>S: (Un)Favorite Image</span>
       <span>D: Next Image</span>
       <span>W: Close Image</span>
+      <span>E: Open artist in new tab</span>
     </div>
     <div class="tags">
       <h2 class="title">Tags</h2>
@@ -116,8 +113,13 @@ export default {
     tags() {
       return this.image.tags;
     },
-    score() {
-      return this.image.score;
+    score: {
+      get() {
+        return this.image.score;
+      },
+      set(v) {
+        return (this.image.score += v);
+      },
     },
     favorited: {
       get() {
@@ -150,9 +152,9 @@ export default {
       if (await this.addPostToFavoriteMutation({ favorited, image_id })) {
         this.favorited = !this.favorited;
         if (this.favorited) {
-          this.image.score++;
+          this.score += 1;
         } else {
-          this.image.score--;
+          this.score -= 1;
         }
       }
     },
@@ -175,6 +177,7 @@ export default {
   transition: flex 0.2s ease;
   z-index: 1015;
 }
+
 .detail .title {
   font-size: 1.35rem;
   margin: 0;
