@@ -33,7 +33,7 @@
             "
           >
             <transition name="fade">
-              <div class="loading-cover" v-show="loading"><span>loading...</span></div>
+              <div class="loading-cover" v-if="loading"><span>loading...</span></div>
             </transition>
 
             <video
