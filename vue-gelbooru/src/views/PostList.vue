@@ -1,25 +1,17 @@
 <template>
   <nav-header v-model:search="search"></nav-header>
-  <image-viewer
-    @showPrevImage="handleShowPrevImage"
-    @showNextImage="handleShowNextImage"
-  ></image-viewer>
+  <image-viewer @showPrevImage="handleShowPrevImage" @showNextImage="handleShowNextImage"></image-viewer>
   <image-list ref="imageListRef" v-if="newPostLoaded">
-    <image-list-item
-      v-for="(post, idx) in posts"
-      :key="post.id"
-      :post="post"
-      @click="showImageViewer(idx)"
-    ></image-list-item>
+    <image-list-item v-for="(post, idx) in posts" :key="post.id" :post="post" @click="showImageViewer(idx)">
+    </image-list-item>
   </image-list>
   <div class="loading" v-else>
-    <h3 v-if="!loading">
+    <h3 v-if="loading">Loading...</h3>
+    <h3 v-else>
       Nobody here but us chickens!
       <br />
-      <i
-        >Check your blacklist. We now automatically omit terms from your search
-        when you have any tag there.</i
-      >
+      <i>Check your blacklist. We now automatically omit terms from your search
+        when you have any tag there.</i>
     </h3>
   </div>
 </template>
